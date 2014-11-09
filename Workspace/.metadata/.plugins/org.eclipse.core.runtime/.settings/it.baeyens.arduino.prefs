@@ -1,0 +1,17 @@
+Arduino\ Board=Arduino Uno
+Arduino\ Custom\ Option\ Selections=
+Arduino\ IDE\ Version=1.5.8
+Arduino\ Path=C\:\\Program Files (x86)\\Arduino
+Arduino\ Port=12
+Arduino\ boards\ file=C\:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\boards.txt
+FmStatus=4
+FsStatus=4
+FuStatub=15
+FuStatus=2
+JANTJE.TEMPLATE_FOLDER=
+JANTJE.TEMPLATE_USE_DEFAULT=true
+Private\ Library\ Path=C\:\\Program Files (x86)\\Arduino\\libraries
+Private\ hardware\ Path=C\:\\Program Files (x86)\\Arduino\\hardware
+Serial\ Monitor\ Last\ Used\ Line\ Ending\ index=0
+Serial\ Monitor\ Last\ Used\ auto\ scroll\ setting=false
+eclipse.preferences.version=1

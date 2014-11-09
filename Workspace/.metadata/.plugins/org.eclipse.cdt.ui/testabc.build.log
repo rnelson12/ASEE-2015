@@ -1,0 +1,9 @@
+00:30:05 **** Build of configuration Release for project testabc ****
+make all 
+Building file: ../.ino.cpp
+Starting C++ compile
+"C:/Program Files (x86)/Arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=158 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR     -I"C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino" -I"C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard" -MMD -MP -MF".ino.cpp.d" -MT".ino.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "../.ino.cpp"  -o  ".ino.cpp.o"   -Wall
+make: *** [.ino.cpp.o] Error 53
+
+00:30:11 Build Finished (took 5s.671ms)
+

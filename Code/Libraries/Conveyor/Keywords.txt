@@ -1,0 +1,4 @@
+Conveyor	KEYWORD1
+goToPosition	KEYWORD2
+openClaw	KEYWORD2
+closeClaw	KEYWORD2
