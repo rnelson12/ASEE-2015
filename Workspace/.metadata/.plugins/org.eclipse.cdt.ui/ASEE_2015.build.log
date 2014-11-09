@@ -1,9 +1,0 @@
-20:45:19 **** Incremental Build of configuration Release for project ASEE_2015 ****
-make all 
-Building file: ../ASEE_2015.cpp
-Starting C++ compile
-"C:/Program Files (x86)/Arduino/hardware/tools/avr/bin/avr-g++" -c -g -Os -w -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=158 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR     -I"C:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino" -I"C:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard" -MMD -MP -MF"ASEE_2015.cpp.d" -MT"ASEE_2015.cpp.d" -D__IN_ECLIPSE__=1 -x c++ "../ASEE_2015.cpp"  -o  "ASEE_2015.cpp.o"
-make: *** [ASEE_2015.cpp.o] Error 53
-
-20:45:23 Build Finished (took 4s.52ms)
-
