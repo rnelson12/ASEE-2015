@@ -1,0 +1,3 @@
+VisualSensor	KEYWORD1
+getBLock	KEYWORD2
+isClose		KEYWORD2
