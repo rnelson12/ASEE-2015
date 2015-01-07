@@ -51,6 +51,9 @@ void loop()
   {
     int numBlocks = pixy.getBlocks(); //Get all the blocks(detected objects) from the pixy
     int numGoodBlocks = 0; //Sets the number of "good blocks" to be 0 initially.
+    int maxY = 0; //Varaible used to determin the block closest 
+    Block block;  //Variable to keep track of the closes block
+    
     //Loop throgh each block
     for (int j = 0; j < numBlocks; j++)
     {
@@ -58,16 +61,23 @@ void loop()
       if (pixy.blocks[j].width > 30)
       {
         numGoodBlocks++; //We now have at least one good block, increment number of good blocks
-
+        
+        //Determins wich block is closetes based on the Y value given by the camera
+        if (pixy.blocks[j].y > maxy)
+        {
+          maxy = pixy.blocks[j].y;
+          block = pixy.blocks[j];
+        }
+        
         //See where the block we detected is. Right now, our code does this for every block we see and doesn't choose ONLY one fish to go to.
         //If the center of the block is on the left side of the camera
-        if (pixy.blocks[j].x < 150)
+        if (block.x < 150)
         {
           Serial.print("turning left\n");
           go(speed, left);
         }
         //If the center of the block is on the right side of the camera
-        else if (pixy.blocks[j].x > 170)
+        else if (block.x > 170)
         {
           Serial.print("turning right\n");
           go(speed, right);
