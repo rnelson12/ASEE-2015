@@ -41,7 +41,7 @@ void loop()
 {
   //Get IRVoltage from IR sensor
   float IRVoltage = getIRVoltage();
-  //If IR detects object that is close, then stop the motors. 
+  //If IR detects object that is close, then stop the motors.
   if (IRVoltage > stopVoltage)
   {
     Serial.println("fish too close");
@@ -49,53 +49,52 @@ void loop()
   }
   else //The IR didnt detect a close object; look for a fish
   {
-    int numBlocks = pixy.getBlocks(); //Get all the blocks(detected objects) from the pixy
+    int numBlocks = pixy.getBlocks(); //Get the number of blocks(detected objects) from the pixy
     int numGoodBlocks = 0; //Sets the number of "good blocks" to be 0 initially.
-    int maxY = 0; //Varaible used to determin the block closest 
-    Block block;  //Variable to keep track of the closes block
-    
-    //Loop throgh each block
+    int maxY = 0; //Variable used to determine the y value of the closest block
+    Block block;  //Variable to keep track of the closest block
+
+    //Loop throgh each block and find the one closest to the camera
     for (int j = 0; j < numBlocks; j++)
     {
       //Filter out really small blocks(which is currently our only filter for blocks) and move the robot.
       if (pixy.blocks[j].width > 30)
       {
         numGoodBlocks++; //We now have at least one good block, increment number of good blocks
-        
-        //Determins wich block is closetes based on the Y value given by the camera
-        if (pixy.blocks[j].y > maxy)
+
+        //Determines which block is closest based on the Y value given by the camera
+        if (pixy.blocks[j].y > maxY)
         {
-          maxy = pixy.blocks[j].y;
+          maxY = pixy.blocks[j].y;
           block = pixy.blocks[j];
         }
-        
-        //See where the block we detected is. Right now, our code does this for every block we see and doesn't choose ONLY one fish to go to.
-        //If the center of the block is on the left side of the camera
-        if (block.x < 150)
-        {
-          Serial.print("turning left\n");
-          go(speed, left);
-        }
-        //If the center of the block is on the right side of the camera
-        else if (block.x > 170)
-        {
-          Serial.print("turning right\n");
-          go(speed, right);
-        }
-        //The center of the block is in the center of the camera
-        else //Dead zone
-        {
-          Serial.print("not turning: Dead Zone\n");
-          go(speed, straight);
-        }
       }
-      //If  there was NO blocks detected or if there is no GOOD blocks, we dont move. This is only temporary for our prototype
-      if (numBlocks == 0 || numGoodBlocks == 0)
-      {
-        if (numBlocks == 0)Serial.print("not turning: No Blocks\n");
-        if (numGoodBlocks == 0)Serial.print("not turning: No Good Blocks\n");
-        stopMotors();
-      }
+    }
+    //If  there was NO blocks detected or if there is no GOOD blocks, we dont move. This is only temporary for our prototype
+    if (numBlocks == 0 || numGoodBlocks == 0)
+    {
+      if (numBlocks == 0)Serial.print("not turning: No Blocks\n");
+      if (numGoodBlocks == 0)Serial.print("not turning: No Good Blocks\n");
+      stopMotors();
+    }
+    //See where the block we detected is.
+    //If the center of the block is on the left side of the camera
+    else if (block.x < 150)
+    {
+      Serial.print("turning left\n");
+      go(speed, left);
+    }
+    //If the center of the block is on the right side of the camera
+    else if (block.x > 170)
+    {
+      Serial.print("turning right\n");
+      go(speed, right);
+    }
+    //The center of the block is in the center of the camera
+    else //Dead zone
+    {
+      Serial.print("not turning: Dead Zone\n");
+      go(speed, straight);
     }
   }
 }
