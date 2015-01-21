@@ -7,11 +7,11 @@ An example of good code structure is in the Conveyor library.
 =====
 Adding Your Changes to Master Repository
 
-1) You can open the files in your fork and edit them any way you like. 
-2) Once you have edited them and want them to be added to the source files, you need to first commit the changes you've made by using the GitHub application.
-3) After that, go to your fork on your account at github.com. 
-4) Then click the green box titled "create pull request". 
-5) After you make your pull request, the changes you made will be reviewed and added to the source files. 
+1. You can open the files in your fork and edit them any way you like. 
+2. Once you have edited them and want them to be added to the source files, you need to first commit the changes you've made by using the GitHub application.
+3. After that, go to your fork on your account at github.com. 
+4. Then click the green box titled "create pull request". 
+5. After you make your pull request, the changes you made will be reviewed and added to the source files. 
 
 More, detailed information is here: https://help.github.com/articles/using-pull-requests/
 
