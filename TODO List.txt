@@ -1,0 +1,53 @@
+******ASEE Software Team TODO List*******
+
+This is our TODO list. Feel free to delete things off here once they are completed, or add things here you think need doing.
+
+***********************
+General:
+-Make a BinSystem library that manages the bins
+-Test out all of our libraries independently once we've made a test sketch for them.
+-Make the "main sketch", includes all the libraries we've made into one package so we can test everything. AKA The Final Product
+-Update UML on wiki to match our current software design
+
+***************************
+Conveyor Library:
+-Conveyor.h
+--change private variables to have _underscore names
+--add comment to functions, classes, enums, and variables
+--change goToPosition to have the ClawPosition enum as the parameter
+--change constructor to accept pin number of the limit switches, motorSpeed and servo angles as parameters
+--add comment to ClawPosition enum: numbers = pin numbers for servos
+
+-Conveyor.cpp
+--fix openClaw() method (currently closes claw)
+--fix constructor(based on .h file)
+--fix goToPosition(based on .h file)
+
+-Test Sketch
+--make one that tests all functions of this library
+
+**************************
+Drivetrain Library:
+-Drivetrain.h
+--add comments to functions, classes, and variables
+--change parameter name of goSpeed to power
+
+-Drivetrain.cpp
+--finish the rotate() function (add more steps)
+
+-Test Sketch
+--make one that test all the functions of this library
+
+**************************
+Visual Sensor Library:
+-VisualSensor.h
+--add comments for functions, variables and classes
+--rename pixy to _pixy
+
+-VisualSensor.cpp
+--rename pixy to _pixy
+
+-Test Sketch
+--Make one that tests all the functions of this library
+
+**************************
