@@ -67,7 +67,7 @@ void Drivetrain::goToFish(Block block)
 }
 
 /**
- * Rotates an amount based on what step we're on
+ * Rotates an amount based on what step we're on. StepNum > 0
  */
 void Drivetrain::rotate(int stepNum)
 {
