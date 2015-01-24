@@ -21,8 +21,6 @@ General:
 -Conveyor.h
 --add comment to functions, classes, enums, and variables
 
--Conveyor.cpp
-
 -Test Sketch
 --make one that tests all functions of this library
 
