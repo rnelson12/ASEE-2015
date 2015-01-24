@@ -27,13 +27,10 @@ General:
 --make one that tests all functions of this library
 
 **************************
-(1-28-15) Drivetrain Library: (Bryce and Whitney)
+Drivetrain Library:
 
 -Drivetrain.cpp
 --finish the rotate() function (add more steps), need to test this function to get the right times for the array
-
--Test Sketch
---Made a test sketch, need to actually test it
 
 **************************
 (1-28-15) Visual Sensor Library: (Whitney and Bryce)

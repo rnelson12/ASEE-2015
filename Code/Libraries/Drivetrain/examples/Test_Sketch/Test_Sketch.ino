@@ -16,10 +16,10 @@
  */
  
 //Pins for motors
-byte leftMotorForward = 3;
-byte leftMotorBackward = 10;
-byte rightMotorForward = 5;
-byte rightMotorBackward = 6;
+byte leftMotorForward = 2;
+byte leftMotorBackward = 3;
+byte rightMotorForward = 4;
+byte rightMotorBackward = 5;
 
 int center = 160; //Where the robot aims when it detects a block. Valid values are 0 - 319.
 int deadZone = 20; //How big the "center" of the robot is. Smaller values will cause robot to wiggle more.
@@ -46,29 +46,29 @@ void loop()
   (*wheels).goToFish(testCenterBlock);
   delay(1000);
   (*wheels).stopMotors();
-  delay(100);
+  delay(1000);
   
   //Tests as if there was a block in the left. Right wheel should power for 1 sec.
   (*wheels).goToFish(testLeftBlock);
   delay(1000);
   (*wheels).stopMotors();
-  delay(100);
+  delay(1000);
   
   //Tests as if there was a block in the right. Left wheel should power for 1 sec.
   (*wheels).goToFish(testRightBlock);
   delay(1000);
   (*wheels).stopMotors();
-  delay(100);
+  delay(1000);
   
   //Tests the first rotation. Left wheel should power for 1 sec.
   (*wheels).rotate(1);
-  delay(100);
+  delay(1000);
   
   //Tests the second rotation. Right wheel should power for 1 sec.
   (*wheels).rotate(2);
-  delay(100);
+  delay(1000);
   
   //Tests the third rotation. Right wheel should power for 1 sec.
   (*wheels).rotate(3);
-  delay(100);
+  delay(1000);
 }
