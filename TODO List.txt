@@ -28,15 +28,12 @@ General:
 
 **************************
 (1-28-15) Drivetrain Library: (Bryce and Whitney)
--Drivetrain.h
---add comments to functions, classes, and variables
---change parameter name of goSpeed to power
 
 -Drivetrain.cpp
 --finish the rotate() function (add more steps), need to test this function to get the right times for the array
 
 -Test Sketch
---make one that test all the functions of this library
+--Made a test sketch, need to actually test it
 
 **************************
 (1-28-15) Visual Sensor Library: (Whitney and Bryce)
@@ -51,3 +48,10 @@ General:
 --Make one that tests all the functions of this library
 
 **************************
+Stop using delay() in programs and functions in libraries
+
+-delay() causes the program to stop for a specified amount of time.
+	This means the program is required to do something until the amount of time has
+	passed. So we can't do multiple things at once(like picking up a fish AND 
+	rotating the robot) if we use delay(). Found an	alternative to delay here: 
+	http://playground.arduino.cc/Code/AvoidDelay
