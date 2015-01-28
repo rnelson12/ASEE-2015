@@ -16,10 +16,10 @@
  */
  
 //Pins for motors
-byte leftMotorForward = 2;
-byte leftMotorBackward = 3;
-byte rightMotorForward = 4;
-byte rightMotorBackward = 5;
+const byte leftMotorForward = 2;
+const byte leftMotorBackward = 3;
+const byte rightMotorForward = 4;
+const byte rightMotorBackward = 5;
 
 int center = 160; //Where the robot aims when it detects a block. Valid values are 0 - 319.
 int deadZone = 20; //How big the "center" of the robot is. Smaller values will cause robot to wiggle more.

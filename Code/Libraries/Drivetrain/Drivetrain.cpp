@@ -8,8 +8,8 @@
  * power: How much power for wheel motors. Valid values are 0 - 255.
  * *stepTimes: An array where each element is how much time in milliseconds should be spent at each step of rotation.
  */
-Drivetrain::Drivetrain(byte leftMotorForward, byte leftMotorBackward,
-                       byte rightMotorForward, byte rightMotorBackward,
+Drivetrain::Drivetrain(const byte leftMotorForward, const byte leftMotorBackward,
+                       const byte rightMotorForward, const byte rightMotorBackward,
                        int center, int deadZone, int power,
                        int *stepTimes)
 {
