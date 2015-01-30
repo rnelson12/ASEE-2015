@@ -73,56 +73,86 @@ void Drivetrain::rotate(int stepNum)
 {
   switch (stepNum)
   {
-    case 1: turnRight(_power);
-      delay(_stepTimes[0]);
+    case 1: turnRight(_power); //At fish 1, turn to fish 2
+	  delay(_stepTimes[stepNum]);
       stopMotors();
       break;
-    case 2: //Same as case 3
-    case 3: turnLeft(_power);
-      delay(_stepTimes[2]);
+	case 2: turnLeft(_power); //At fish 2, turn to fish 3
+	  delay(_stepTimes[stepNum]);
+	  stopMotors();
+	  break;
+    case 3: turnLeft(_power); //At fish 3, turn to fish 4
+	  delay(_stepTimes[stepNum]);
       stopMotors();
       break;
+
     //Turn to face the outer ring of fish
-    case 4: turnRight(_power);
-      delay(_stepTimes[3]);
+    case 4: turnRight(_power); //At fish 4, turn to fish 5
+	  delay(_stepTimes[stepNum]);
       stopMotors();
       break;
-    case 5: turnLeft(_power);
-      delay(_stepTimes[4]);
+    case 5: turnLeft(_power); //At fish 5, turn to fish 6
+	  delay(_stepTimes[stepNum]);
       stopMotors();
       break;
-    case 6: //Same as case 11
-    case 7: //Same as case 11
-    case 8: //Same as case 11
-    case 9: //Same as case 11
-    case 10: //Same as case 11
-    case 11: turnLeft(_power);
-      delay(_stepTimes[10]);
+	case 6: turnLeft(_power); //At fish 6, turn to fish 7
+	  delay(_stepTimes[stepNum]);
+	  stopMotors();
+	  break;
+	case 7: turnLeft(_power); //At fish 7, turn to fish 8
+	  delay(_stepTimes[stepNum]);
+	  stopMotors();
+	  break;
+	case 8: turnLeft(_power); //At fish 8, turn to fish 9
+	  delay(_stepTimes[stepNum]);
+	  stopMotors();
+	  break;
+	case 9: turnLeft(_power); //At fish 9, turn to fish 10
+	  delay(_stepTimes[stepNum]);
+	  stopMotors();
+	  break;
+	case 10: turnLeft(_power); //At fish 10, turn to fish 11
+	  delay(_stepTimes[stepNum]);
+	  stopMotors();
+	  break;
+    case 11: turnLeft(_power); //At fish 11, turn to fish 12
+	  delay(_stepTimes[stepNum]);
       stopMotors();
       break;
-    //Turn right to face first bin
-    case 12: turnRight(_power);
-      delay(_stepTimes[11]);
+
+    //End of fish collection route
+    case 12: turnRight(_power); //At fish 12, face bin 1
+	  delay(_stepTimes[stepNum]);
       stopMotors();
       break;
-    //TODO more steps than I first thought, will need to finish the rest;
-    // there are two steps for each bin
-    case 13: turnLeft(_power);
-      delay(_stepTimes[12]);
+    case 13: turnLeft(_power); //At bin 1, reposition for dumping
+	  delay(_stepTimes[stepNum]);
       stopMotors();
       break;
-    case 14: turnRight(_power);
-      delay(_stepTimes[13]);
-      stopMotors();
-      break;
-    case 15: turnRight(_power);
-      delay(_stepTimes[14]);
-      stopMotors();
-      break;
-    case 16: turnRight(_power);
-      delay(_stepTimes[15]);
-      stopMotors();
-      break;
+	case 14: turnLeft(_power); //At bin 1, face bin 2
+	  delay(_stepTimes[stepNum]);
+	  stopMotors();
+	  break;
+	case 15: turnLeft(_power); //At bin 2, reposition for dumping
+	  delay(_stepTimes[stepNum]);
+	  stopMotors();
+	  break;
+	case 16: turnLeft(_power); //At bin 2, face bin 3
+	  delay(_stepTimes[stepNum]);
+	  stopMotors();
+	  break;
+	case 17: turnLeft(_power); //At bin 3, reposition for dumping
+	  delay(_stepTimes[stepNum]);
+	  stopMotors();
+	  break;
+	case 18: turnLeft(_power); //At bin 3, face bin 4
+	  delay(_stepTimes[stepNum]);
+	  stopMotors();
+	  break;
+	case 19: turnLeft(_power); //At bin 4, reposition for dumping
+	  delay(_stepTimes[stepNum]);
+	  stopMotors();
+	  break;
   }
 }
 

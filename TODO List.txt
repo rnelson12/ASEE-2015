@@ -5,16 +5,14 @@ This is our TODO list. Feel free to delete things off here once they are complet
 ***********************
 General:
 -Make a BinSystem library that manages the bins
--Test out all of our libraries independently once we've made a test sketch for them.
 -Make the "main sketch", includes all the libraries we've made into one package so we can test everything. AKA The Final Product
 -Update UML on wiki to match our current software design
 
 ***************************
 (1-31-15) Track Test Run
-- (1-28-15) Make a test sketch including drivetrain and visualSensor library
---Finish drivetrain and visualSensor library
 
--Will test out a path around the track, stopping briefly at each fish (4 sec)
+-Test our sketch around the track, stopping briefly at each fish (4 sec)
+--Fill out correct array times to stop the right amount of time
 
 **************************
 (1-31-15) Conveyor Library:
@@ -29,9 +27,6 @@ Drivetrain Library: (Done for now)
 
 -Implement PID control to tune the motors so they turn at same speed(go in straight line)
 --May not be needed
-
--Drivetrain.cpp
---finish the rotate() function (add more steps), need to test this function to get the right times for the array
 
 **************************
 Visual Sensor Library: (Done for now)
