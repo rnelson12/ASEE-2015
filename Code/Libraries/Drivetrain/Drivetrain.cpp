@@ -10,7 +10,7 @@
  */
 Drivetrain::Drivetrain(const byte leftMotorForward, const byte leftMotorBackward,
                        const byte rightMotorForward, const byte rightMotorBackward,
-                       int center, int deadZone, int power,
+                       int center, byte deadZone, byte power,
                        int *stepTimes)
 {
   //Set the pinmode of the motor ports to be output.
