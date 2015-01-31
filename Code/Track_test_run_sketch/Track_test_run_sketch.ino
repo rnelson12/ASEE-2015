@@ -22,43 +22,42 @@
  */
 
 //Port Assignment
-const byte leftMotorForward = 3;
-const byte leftMotorBackward = 10;
-const byte rightMotorForward = 5;
-const byte rightMotorBackward = 6;
+const byte leftMotorForward = 2;
+const byte leftMotorBackward = 3;
+const byte rightMotorForward = 4;
+const byte rightMotorBackward = 5;
 const char IRPort = A0;
 
 //Adjustment values
 float stopVoltage = 2.8; //How close the robot gets before it stops. Lower number means greater stopping distance. Maximum value is 3.2.
 int center = 160; //Where the robot aims when it detects a block. Valid values are 0 - 319.
-byte deadZone = 20; //How big the "center" of the robot is. Smaller values will cause robot to wiggle more.
-byte power = 160; //How much power for wheel motors. Valid values are 0 - 255.
+byte power = 140; //How much power for wheel motors. Valid values are 0 - 255.
 
 //Steptimes array; need to test robot around track to fill out these values
 //It's an array where each element is how much time in milliseconds should be spent at each step of rotation.
-int stepTimes[19] = {1000, //At fish 1, turn to fish 2
-                     1000, //At fish 2, turn to fish 3
-                     1000, //At fish 3, turn to fish 4
+int stepTimes[19] = {250, //At fish 1, turn RIGHT to fish 2
+                     600, //At fish 2, turn LEFT to fish 3
+                     800, //At fish 3, turn LEFT to fish 4
 
                      //Turn to face the outer ring of fish
-                     1000, //At fish 4, turn to fish 5
-                     1000, //At fish 5, turn to fish 6
-                     1000, //At fish 6, turn to fish 7
-                     1000, //At fish 7, turn to fish 8
-                     1000, //At fish 8, turn to fish 9
-                     1000, //At fish 9, turn to fish 10
-                     1000, //At fish 10, turn to fish 11
-                     1000, //At fish 11, turn to fish 12
+                     50, //At fish 4, turn RIGHT to fish 5
+                     600, //At fish 5, turn LEFT to fish 6
+                     600, //At fish 6, turn LEFT to fish 7
+                     600, //At fish 7, turn LEFT to fish 8
+                     600, //At fish 8, turn LEFT to fish 9
+                     600, //At fish 9, turn LEFT to fish 10
+                     600, //At fish 10, turn LEFT to fish 11
+                     600, //At fish 11, turn LEFT to fish 12
 
                      //End of fish collection route
-                     1000, //At fish 12, face bin 1
-                     1000, //At bin 1, reposition for dumping
-                     1000, //At bin 1, face bin 2
-                     1000, //At bin 2, reposition for dumping
-                     1000, //At bin 2, face bin 3
-                     1000, //At bin 3, reposition for dumping
-                     1000, //At bin 3, face bin 4
-                     1000, //At bin 4, reposition for dumping
+                     600, //At fish 12, face bin 1
+                     600, //At bin 1, reposition for dumping
+                     600, //At bin 1, face bin 2
+                     600, //At bin 2, reposition for dumping
+                     600, //At bin 2, face bin 3
+                     600, //At bin 3, reposition for dumping
+                     600, //At bin 3, face bin 4
+                     600, //At bin 4, reposition for dumping
                     };
 
 //Classes from our libraries
@@ -74,7 +73,7 @@ void setup()
   Serial.begin(9600);
 
   //Construct drivetrain and sensor objects
-  wheels = new Drivetrain(leftMotorForward, leftMotorBackward, rightMotorForward, rightMotorBackward, center, deadZone, power, stepTimes);
+  wheels = new Drivetrain(leftMotorForward, leftMotorBackward, rightMotorForward, rightMotorBackward, center, power, stepTimes);
   eyes = new VisualSensor(IRPort, stopVoltage);
 
   numFishCollected = 0;

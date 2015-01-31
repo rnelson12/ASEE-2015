@@ -14,13 +14,11 @@ class Drivetrain
 	/**
 	* Constructor. Sets the pins for all the motors.
 	* center: Where the robot aims when it detects a block. Valid values are 0 - 319.
-	* deadZone: How big the "center" of the robot is. Smaller values will cause robot to wiggle more.
 	* power: How much power for wheel motors. Valid values are 0 - 255.
 	* *stepTimes: An array where each element is how much time in milliseconds should be spent at each step of rotation.
 	*/
     Drivetrain(const byte leftMotorForward, const byte leftMotorBackward, const byte rightMotorForward,
-               const byte rightMotorBackward, int center, byte deadZone, byte power, 
-               int *stepTimes);
+               const byte rightMotorBackward, int center, byte power, int *stepTimes);
     ~Drivetrain();
 
 	/**
@@ -61,7 +59,6 @@ class Drivetrain
     byte _leftMotorBackward; //Pin for left motor backward.
     byte _rightMotorBackward; //Pin for right motor backward.
     int _center; //Where the robot aims when it detects a block. Valid values are 0 - 319.
-    byte _deadZone; //How big the "center" of the robot is. Smaller values will cause robot to wiggle more.
     byte _power; //How much power for wheel motors. Valid values are 0 - 255.
     int *_stepTimes; //An array where each element is how much time in milliseconds should be spent at each step of rotation.
 };
