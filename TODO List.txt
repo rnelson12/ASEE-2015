@@ -9,13 +9,29 @@ General:
 -Update UML on wiki to match our current software design
 
 ***************************
-(1-31-15) Track Test Run
+Track Test Run
 
 -Test our sketch around the track, stopping briefly at each fish (4 sec)
 --Fill out correct array times to stop the right amount of time
 
+Learned some things:
+-Robot wiggles and doesn't line up the same way every time. This is a big deal, as having
+	the robot line up correctly with the fish is essential to being able to pick up 
+	the fish. It also affects how far we need to rotate for the next fish.
+-Possible Solutions:
+--1) Implement PID controller so the robot goes straight
+--2) Slow robot down when it gets close to fish, so last second corrections to line it up 		in the center are minor.
+--3) Get encoders
+
+-It's annoying to manually adjust the preset times of how long to rotate after the robot
+	has picked up a fish, and minor variations could affect how long the robot
+	should rotate.
+-Alternatives to using preset times:
+--1) Gyro - rotate to a certain angle
+--2) Pixy - rotate until the next fish you want is in view
+
 **************************
-(1-31-15) Conveyor Library:
+Conveyor Library:
 -Conveyor.h
 --add comment to functions, classes, enums, and variables
 
@@ -26,7 +42,6 @@ General:
 Drivetrain Library: (Done for now)
 
 -Implement PID control to tune the motors so they turn at same speed(go in straight line)
---May not be needed
 
 **************************
 Visual Sensor Library: (Done for now)
