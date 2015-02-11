@@ -19,8 +19,8 @@ Learned some things:
 	the robot line up correctly with the fish is essential to being able to pick up 
 	the fish. It also affects how far we need to rotate for the next fish.
 -Possible Solutions:
---1) Implement PID controller so the robot goes straight
---2) Slow robot down when it gets close to fish, so last second corrections to line it up 		in the center are minor.
+--1) Test PID to see if it's sufficient
+--2) Slow robot down when it gets close to fish, so last second corrections to line it up in the center are minor.
 --3) Get encoders
 
 -It's annoying to manually adjust the preset times of how long to rotate after the robot
@@ -39,12 +39,12 @@ Conveyor Library:
 --make one that tests all functions of this library
 
 **************************
-Drivetrain Library: (Done for now)
+Drivetrain Library: 
 
--Implement PID control to tune the motors so they turn at same speed(go in straight line)
+-Tune PID controller so it works perfectly(or close)
 
 **************************
-Visual Sensor Library: (Done for now)
+Visual Sensor Library: 
 
 
 **************************

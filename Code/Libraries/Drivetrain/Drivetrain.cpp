@@ -6,10 +6,12 @@
  * center: Where the robot aims when it detects a block. Valid values are 0 - 319.
  * power: How much power for wheel motors. Valid values are 0 - 255.
  * *stepTimes: An array where each element is how much time in milliseconds should be spent at each step of rotation.
+ * kp, ki, kd: Constants for proportional, integral, derivative components used to tune the PID controller.
  */
 Drivetrain::Drivetrain(const byte leftMotorForward, const byte leftMotorBackward,
                        const byte rightMotorForward, const byte rightMotorBackward,
-                       int center, byte power, int *stepTimes)
+                       int center, byte power, int *stepTimes,
+					   float kp, float ki, float kd)
 {
   //Set the pinmode of the motor ports to be output.
   pinMode(leftMotorForward, OUTPUT);
@@ -17,13 +19,24 @@ Drivetrain::Drivetrain(const byte leftMotorForward, const byte leftMotorBackward
   pinMode(rightMotorForward, OUTPUT);
   pinMode(rightMotorBackward, OUTPUT);
 
+  //Set ports
   _leftMotorForward = leftMotorForward;
   _leftMotorBackward = leftMotorBackward;
   _rightMotorForward = rightMotorForward;
   _rightMotorBackward = rightMotorBackward;
+
+  //Set motor variables
   _center = center;
   _power = power;
   _stepTimes = stepTimes;
+
+  //Set PID variables
+  _previousTime = 0;
+  _previousError = 0;
+  _integral = 0;
+  _kp = kp;
+  _ki = ki;
+  _kd = kd;
 }
 
 /**
@@ -36,6 +49,42 @@ Drivetrain::~Drivetrain()
 /******************
  * Public Methods *
  ******************/
+
+/**
+* Uses PID control to go toward a block. Tries to keep the block aligned with _center.
+*/
+void Drivetrain::goToFishPID( Block block, unsigned long currentTime )
+{
+	unsigned long dt = currentTime - _previousTime; //Find how long has passed since the last adjustment.
+	_previousTime = currentTime;
+
+	//Determine error; how far off the robot is from center
+	int error = _center - block.x; 
+	Serial.print("error: ");
+	Serial.println(error);
+
+	/*
+	//Determine integral; sum of all errors
+	_integral += error*dt; 
+	//Serial.print("integral: ");
+	//Serial.println(_integral);
+
+	//Determine derivative; rate of change of errors
+	float derivative = (error - _previousError)/dt; 
+	//Serial.print("derivative: ");
+	//Serial.println(derivative);
+	*/
+
+	//Determine output
+	int output = (int)(_kp*error); //+ _ki*_integral + _kd*derivative);
+	Serial.print( "output: " );
+	Serial.println(output);
+
+	_previousError = error;
+
+	//Go to the fish with the adjusted power values.
+	go( _power, output );
+}
 
 /**
  * Gives power to motors, keeping the center of the block aligned with the requested center
@@ -161,6 +210,52 @@ void Drivetrain::stopMotors()
   analogWrite(_rightMotorBackward, 0);
   analogWrite(_leftMotorForward, 0);
   analogWrite(_leftMotorBackward, 0);
+}
+
+/**
+ * Gives the motors power based on an adjustment to try to make them go straight. The adjustment value is determined by PID controller.
+ */
+void Drivetrain::go( int power, int adjustment )
+{
+	//Before adjustment for PWM limits
+	int right = power + adjustment;
+	int left = power - adjustment;
+	
+	Serial.print("right before adj.: ");
+	Serial.println(right);
+	Serial.print("left before adj.: ");
+	Serial.println(left);
+	
+
+	//After adjustment for PWM limits
+	if((power + adjustment) < 0)
+	{
+		right = 0;
+	}
+	else if((power + adjustment) > 255)
+	{
+		right = 255;
+	}
+	if((power - adjustment) < 0)
+	{
+		left = 0;
+	}
+	else if((power - adjustment) > 255)
+	{
+		left = 255;
+	}
+	
+	Serial.print( "right final: " );
+	Serial.println(right);
+	Serial.print( "left final: ");
+	Serial.println( left );
+	
+
+	//Go with new adjustments
+	analogWrite( _rightMotorForward, right);
+	analogWrite( _rightMotorBackward, 0 );
+	analogWrite( _leftMotorForward, left);
+	analogWrite( _leftMotorBackward, 0 );
 }
 
 /**
