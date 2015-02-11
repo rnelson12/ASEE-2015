@@ -42,7 +42,7 @@ class Drivetrain
 	/**
 	 *
 	 */
-	void go( int power, float adjustment );
+	void go( int power, int adjustment );
 
 	/**
 	* Gives all motors 0 power.
@@ -79,7 +79,7 @@ class Drivetrain
 	//PID controller variables
 	unsigned long _previousTime;
 	int _previousError;
-	unsigned long _integral;
+	long _integral;
 	float _kp;
 	float _ki;
 	float _kd;

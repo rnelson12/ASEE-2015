@@ -60,19 +60,25 @@ void Drivetrain::goToFishPID( Block block, unsigned long currentTime )
 
 	//Determine error; how far off the robot is from center
 	int error = _center - block.x; 
+	Serial.print("error: ");
+	Serial.println(error);
 
+	/*
 	//Determine integral; sum of all errors
 	_integral += error*dt; 
-	if( _integral > 255 ) _integral = 255;
-	else if( _integral < 0 ) _integral = 0;
+	//Serial.print("integral: ");
+	//Serial.println(_integral);
 
-	//Determine derivative
-	float derivative = ((float)( error - _previousError )) / dt; 
+	//Determine derivative; rate of change of errors
+	float derivative = (error - _previousError)/dt; 
+	//Serial.print("derivative: ");
+	//Serial.println(derivative);
+	*/
 
 	//Determine output
-	float output = _kp*error + _ki*_integral + _kd*derivative; 
-	if( output > 255 ) output = 255;
-	else if( output < 0 ) output = 0;
+	int output = (int)(_kp*error); //+ _ki*_integral + _kd*derivative);
+	Serial.print( "output: " );
+	Serial.println(output);
 
 	_previousError = error;
 
@@ -209,11 +215,46 @@ void Drivetrain::stopMotors()
 /**
  * Gives the motors power based on an adjustment to try to make them go straight. The adjustment value is determined by PID controller.
  */
-void Drivetrain::go( int power, float adjustment )
+void Drivetrain::go( int power, int adjustment )
 {
-	analogWrite( _rightMotorForward, (int)(power + adjustment));
+	//Before adjustment for PWM limits
+	int right = power + adjustment;
+	int left = power - adjustment;
+	
+	Serial.print("right before adj.: ");
+	Serial.println(right);
+	Serial.print("left before adj.: ");
+	Serial.println(left);
+	
+
+	//After adjustment for PWM limits
+	if((power + adjustment) < 0)
+	{
+		right = 0;
+	}
+	else if((power + adjustment) > 255)
+	{
+		right = 255;
+	}
+	if((power - adjustment) < 0)
+	{
+		left = 0;
+	}
+	else if((power - adjustment) > 255)
+	{
+		left = 255;
+	}
+	
+	Serial.print( "right final: " );
+	Serial.println(right);
+	Serial.print( "left final: ");
+	Serial.println( left );
+	
+
+	//Go with new adjustments
+	analogWrite( _rightMotorForward, right);
 	analogWrite( _rightMotorBackward, 0 );
-	analogWrite( _leftMotorForward, (int)(power - adjustment));
+	analogWrite( _leftMotorForward, left);
 	analogWrite( _leftMotorBackward, 0 );
 }
 
