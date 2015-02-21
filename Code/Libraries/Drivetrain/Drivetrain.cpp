@@ -58,25 +58,25 @@ void Drivetrain::goToFishPID( Block block, unsigned long currentTime )
 	unsigned long dt = currentTime - _previousTime; //Find how long has passed since the last adjustment.
 	_previousTime = currentTime;
 
+	Serial.println("--------");
+
 	//Determine error; how far off the robot is from center
 	int error = _center - block.x; 
 	Serial.print("error: ");
 	Serial.println(error);
 
-	/*
 	//Determine integral; sum of all errors
 	_integral += error*dt; 
-	//Serial.print("integral: ");
-	//Serial.println(_integral);
+	Serial.print("integral: ");
+	Serial.println(_integral);
 
 	//Determine derivative; rate of change of errors
-	float derivative = (error - _previousError)/dt; 
-	//Serial.print("derivative: ");
-	//Serial.println(derivative);
-	*/
+	float derivative = (1.0*error - _previousError)/dt; 
+	Serial.print("derivative: ");
+	Serial.println(derivative);
 
 	//Determine output
-	int output = (int)(_kp*error); //+ _ki*_integral + _kd*derivative);
+	int output = (int) (_kp*error + (_ki/1000)*_integral + (1000*_kd)*derivative);
 	Serial.print( "output: " );
 	Serial.println(output);
 
@@ -206,10 +206,10 @@ void Drivetrain::rotate(int stepNum)
  */
 void Drivetrain::stopMotors()
 {
-  analogWrite(_rightMotorForward, 0);
-  analogWrite(_rightMotorBackward, 0);
-  analogWrite(_leftMotorForward, 0);
-  analogWrite(_leftMotorBackward, 0);
+  analogWrite(_rightMotorForward, 100);
+  analogWrite(_rightMotorBackward, 100);
+  analogWrite(_leftMotorForward, 100);
+  analogWrite(_leftMotorBackward, 100);
 }
 
 /**

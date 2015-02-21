@@ -21,9 +21,9 @@ byte power = 80; //How much power for wheel motors. Valid values are 0 - 255.
 int stepTimes[] = {1000};
 
 //Constants for PID controller
-float kp = 0.4; //proportional
-float ki = 0.0; //integral
-float kd = 0.0; //derivative
+float kp = 0.25; //proportional
+float ki = 0.025; //integral
+float kd = 0.05; //derivative
 
 VisualSensor *eyes;
 Drivetrain *wheels;
