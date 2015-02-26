@@ -101,9 +101,9 @@ private:
 	boolean _isRotating; //Boolean to keep track if the robot is in the rotate method
 	//Keep track of values needed to turn correctly
 	boolean _turnRight; //Keep track of turning right or left
-	int _desiredDegrees;
-	int _leftDegrees;
-	int _rightDegrees;
+	float _desiredDegrees;
+	float _leftDegrees;
+	float _rightDegrees;
 	byte _turnDeadzone;
 };
 

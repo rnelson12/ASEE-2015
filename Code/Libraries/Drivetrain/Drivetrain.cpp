@@ -36,8 +36,8 @@ Drivetrain::Drivetrain(const byte leftMotorForward, const byte leftMotorBackward
 	//Keep track of values needed to turn correctly
 	_turnRight = false;
 	_desiredDegrees = compass->getInitDegrees(); //Set initial desired degrees to be equal to the initial heading
-	_leftDegrees = 0;
-	_rightDegrees = 0;
+	_leftDegrees = 0.0;
+	_rightDegrees = 0.0;
 	_turnDeadzone = turnDeadzone;//+- degrees acceptable
 
 	//Set PID variables
@@ -157,7 +157,7 @@ boolean Drivetrain::rotateDegrees(byte stepNum, byte power)
 	}
 
 	//Turn the robot until the heading measured by the compass is the correct heading determined by degrees
-	int currentDegrees = _compass->getDegrees();
+	float currentDegrees = _compass->getDegrees();
 	//Check if robot has turned far enough
 	if(currentDegrees <= _leftDegrees && currentDegrees >= _rightDegrees)
 	{

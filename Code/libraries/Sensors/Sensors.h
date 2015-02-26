@@ -5,11 +5,9 @@
 #include <SPI.h>
 #include <Pixy.h>
 #include <Wire.h>
-#include <limits.h>
 
 /* Taken from ADAFRUIT Library */
 #define HMC5883_ADDRESS_MAG (0x3C >> 1) // 0011110x // I2C ADDRESS/BITS
-#define HMC5883_ID (0b11010100) //CHIP ID
 
 /* REGISTERS */
 typedef enum
@@ -47,11 +45,7 @@ typedef struct hmc5883MagData_s
 	float x;
 	float y;
 	float z;
-	float orientation;
 } hmc5883MagData;
-
-
-
 
 /**
  * Class that contains sensors to be used to visually locate a block. This includes the Pixy and an IR sensor.
@@ -98,41 +92,44 @@ class VisualSensor
  */
 class Compass
 {
-public:
-
-	Adafruit_HMC5883_Unified(int32_t sensorID = -1);
-
-	bool begin(void);
-	void setMagGain(hmc5883MagGain gain);
-	void read(void);
-
+public:	
 	/**
 	 * Constructor. Set the initial heading whenever the program starts.
+	 * -declinationAngle: 'Error' of the magnetic field in your location. Find yours here: http://www.magnetic-declination.com/.
+	 * -(for Norman, I calculated it to be: 0.069522276053)
 	 */
-	Compass();
+	Compass(float declinationAngle = 0.069522276053F);
 
+	/**
+	 * Deconstructor
+	 */
 	~Compass();
-
+	
 	/**
 	 * Returns the current heading of the robot in degrees.
 	 */
-	int getDegrees();
+	float getDegrees();
 
 	/**
 	 * Returns the initial heading when the program was first started in degrees.
 	 */
-	int getInitDegrees();
+	float getInitDegrees();
+
+	/**
+	* Set the magnetometer's gain.
+	*/
+	void setGain(hmc5883MagGain gain);
 
 private:
-	int _initDegrees; //Initial degrees when the robot is started
-
-	hmc5883MagGain   _magGain;
-	hmc5883MagData   _magData;     // Last read magnetometer data will be available here
-	int32_t         _sensorID;
-
-	void write8(byte address, byte reg, byte value);
-	byte read8(byte address, byte reg);
+	float _initDegrees; //Initial degrees when the robot is started
+	float _declinationAngle; // 'Error' of the magnetic field in your location. Find yours here: http://www.magnetic-declination.com/.
 	
+	float _hmc5883_Gauss_LSB_XY;  // Varies with gain
+	float _hmc5883_Gauss_LSB_Z; // Varies with gain
+
+	//Private Functions
+	bool begin(void); //Set up the magnetometer
+	void write8(byte address, byte reg, byte value); //Write data to the magnetometer
 };
 
 #endif

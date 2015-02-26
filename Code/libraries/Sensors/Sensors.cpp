@@ -86,13 +86,29 @@ boolean VisualSensor::isClose()
 
 /**
 * Constructor. Set the initial heading whenever the program starts.
+* -declinationAngle: 'Error' of the magnetic field in your location. Find yours here: http://www.magnetic-declination.com/.
+* -(for Norman, I calculated it to be: 0.069522276053)
 */
-Compass::Compass(int sensorID)
+Compass::Compass(float declinationAngle)
 {
-	_sensorID = sensorID;
+	/* Initialize the sensor */
+	if(!begin())
+	{
+		/* There was a problem detecting the HMC5883 ... check your connections */
+		Serial.println("Ooops, no HMC5883 detected ... Check your wiring!");
+		while(1);
+	}
+
+	_hmc5883_Gauss_LSB_XY = 1100.0F;  // Varies with gain
+	_hmc5883_Gauss_LSB_Z = 980.0F;   // Varies with gain
+
+	_declinationAngle = declinationAngle;
 	_initDegrees = getDegrees();
 }
 
+/**
+* Deconstructor
+*/
 Compass::~Compass()
 {
 
@@ -101,64 +117,7 @@ Compass::~Compass()
 /**
 * Returns the current heading of the robot in degrees. (0 <= degrees < 360)
 */
-int Compass::getDegrees()
-{
-	//TODO
-	return -1;
-}
-
-/**
-* Returns the initial heading when the program was first started in degrees. (0 <= degrees < 360)
-*/
-int Compass::getInitDegrees()
-{
-	return _initDegrees;
-}
-
-
-
-static float _hmc5883_Gauss_LSB_XY = 1100.0F;  // Varies with gain
-static float _hmc5883_Gauss_LSB_Z = 980.0F;   // Varies with gain
-
-/**************************************************************************/
-/*!
-@brief  Abstract away platform differences in Arduino wire library
-*/
-/**************************************************************************/
-void Compass::write8(byte address, byte reg, byte value)
-{
-	Wire.beginTransmission(address);
-	Wire.write((uint8_t) reg);
-	Wire.write((uint8_t) value);
-	Wire.endTransmission();
-}
-
-/**************************************************************************/
-/*!
-@brief  Abstract away platform differences in Arduino wire library
-*/
-/**************************************************************************/
-byte Compass::read8(byte address, byte reg)
-{
-	byte value;
-
-	Wire.beginTransmission(address);
-	Wire.write((uint8_t) reg);
-	Wire.endTransmission();
-
-	Wire.requestFrom(address, (byte) 1);
-	value = Wire.read();
-	Wire.endTransmission();
-
-	return value;
-}
-
-/**************************************************************************/
-/*!
-@brief  Reads the raw data from the sensor
-*/
-/**************************************************************************/
-void Compass::read()
+float Compass::getDegrees()
 {
 	// Read the magnetometer
 	Wire.beginTransmission((byte) HMC5883_ADDRESS_MAG);
@@ -178,48 +137,53 @@ void Compass::read()
 	uint8_t ylo = Wire.read();
 
 	// Shift values to create properly formed integer (low byte first)
-	_magData.x = (int16_t) (xlo | ((int16_t) xhi << 8));
-	_magData.y = (int16_t) (ylo | ((int16_t) yhi << 8));
-	_magData.z = (int16_t) (zlo | ((int16_t) zhi << 8));
+	hmc5883MagData magData;
+	magData.x = (int16_t) (xlo | ((int16_t) xhi << 8));
+	magData.y = (int16_t) (ylo | ((int16_t) yhi << 8));
+	magData.z = (int16_t) (zlo | ((int16_t) zhi << 8));
 
 	// Convert values to correct numbers
-	_magnetic.x = _magData.x / _hmc5883_Gauss_LSB_XY * 100; //* 100 to convert from gauss to microtesla
-	_magnetic.y = _magData.y / _hmc5883_Gauss_LSB_XY * 100;
-	_magnetic.z = _magData.z / _hmc5883_Gauss_LSB_Z * 100;
+	hmc5883MagData magnetic;
+	magnetic.x = magData.x / _hmc5883_Gauss_LSB_XY * 100; //* 100 to convert from gauss to microtesla
+	magnetic.y = magData.y / _hmc5883_Gauss_LSB_XY * 100;
+	magnetic.z = magData.z / _hmc5883_Gauss_LSB_Z * 100;
 
-	// ToDo: Calculate orientation
-	_magData.orientation = 0.0;
+	// Hold the module so that Z is pointing 'up' and you can measure the heading with x&y
+	// Calculate heading when the magnetometer is level, then correct for signs of axis.
+	float heading = atan2(magnetic.y, magnetic.x);
+
+	// Once you have your heading, you must then add your 'Declination Angle',
+	// which is the 'Error' of the magnetic field in your location.
+	// Find yours here: http://www.magnetic-declination.com/
+	heading += _declinationAngle;
+
+	// Correct for when signs are reversed.
+	if(heading < 0)
+		heading += 2 * PI;
+
+	// Check for wrap due to addition of declination.
+	if(heading > 2 * PI)
+		heading -= 2 * PI;
+
+	// Convert radians to degrees.
+	float headingDegrees = heading * 180 / PI;
+	return headingDegrees;
 }
 
-/**************************************************************************/
-/*!
-@brief  Setups the HW
+/**
+* Returns the initial heading when the program was first started in degrees. (0 <= degrees < 360)
 */
-/**************************************************************************/
-bool Compass::begin()
+float Compass::getInitDegrees()
 {
-	// Enable I2C
-	Wire.begin();
-
-	// Enable the magnetometer
-	write8(HMC5883_ADDRESS_MAG, HMC5883_REGISTER_MAG_MR_REG_M, 0x00);
-
-	// Set the gain to a known level
-	setMagGain(HMC5883_MAGGAIN_1_3);
-
-	return true;
+	return _initDegrees;
 }
 
-/**************************************************************************/
-/*!
-@brief  Sets the magnetometer's gain
-*/
-/**************************************************************************/
-void Compass::setMagGain(hmc5883MagGain gain)
+/**
+ * Set the magnetometer's gain
+ */
+void Compass::setGain(hmc5883MagGain gain)
 {
 	write8(HMC5883_ADDRESS_MAG, HMC5883_REGISTER_MAG_CRB_REG_M, (byte) gain);
-
-	_magGain = gain;
 
 	switch(gain)
 	{
@@ -252,4 +216,32 @@ void Compass::setMagGain(hmc5883MagGain gain)
 			_hmc5883_Gauss_LSB_Z = 205;
 			break;
 	}
+}
+
+/**
+* Set up the magnetometer
+*/
+bool Compass::begin()
+{
+	// Enable I2C
+	Wire.begin();
+
+	// Enable the magnetometer
+	write8(HMC5883_ADDRESS_MAG, HMC5883_REGISTER_MAG_MR_REG_M, 0x00);
+
+	// Set the gain to a known level
+	setGain(HMC5883_MAGGAIN_1_3);
+
+	return true;
+}
+
+/**
+* Write data to the magnetometer
+*/
+void Compass::write8(byte address, byte reg, byte value)
+{
+	Wire.beginTransmission(address);
+	Wire.write((uint8_t) reg);
+	Wire.write((uint8_t) value);
+	Wire.endTransmission();
 }

@@ -1,4 +1,5 @@
 #include <SPI.h>
+#include <Wire.h>
 #include <Pixy.h>
 #include <Sensors.h>
 #include <Drivetrain.h>
