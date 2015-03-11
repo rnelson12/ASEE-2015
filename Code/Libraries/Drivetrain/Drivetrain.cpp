@@ -66,8 +66,11 @@ Drivetrain::~Drivetrain()
 void Drivetrain::goToFishPID(Block block, unsigned long currentTime)
 {
 	//Determine PID output
-	unsigned long dt = currentTime - _previousTime; //Find how long has passed since the last adjustment.
+	int dt = currentTime - _previousTime; //Find how long has passed since the last adjustment.
 	_previousTime = currentTime;
+
+	Serial.print("dt: ");
+	Serial.println()
 
 	//Determine error; how far off the robot is from center
 	int error = _center - block.x;

@@ -96,7 +96,6 @@ Compass::Compass(float declinationAngle)
 	{
 		/* There was a problem detecting the HMC5883 ... check your connections */
 		Serial.println("Ooops, no HMC5883 detected ... Check your wiring!");
-		while(1);
 	}
 
 	_hmc5883_Gauss_LSB_XY = 1100.0F;  // Varies with gain
@@ -148,9 +147,9 @@ float Compass::getDegrees()
 	magnetic.y = magData.y / _hmc5883_Gauss_LSB_XY * 100;
 	magnetic.z = magData.z / _hmc5883_Gauss_LSB_Z * 100;
 
-	// Hold the module so that Z is pointing 'up' and you can measure the heading with x&y
+	// Hold the module so that Y is pointing 'up' and you can measure the heading with x&z
 	// Calculate heading when the magnetometer is level, then correct for signs of axis.
-	float heading = atan2(magnetic.y, magnetic.x);
+	float heading = atan2(magnetic.z, magnetic.x);
 
 	// Once you have your heading, you must then add your 'Declination Angle',
 	// which is the 'Error' of the magnetic field in your location.
