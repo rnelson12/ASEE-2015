@@ -149,7 +149,8 @@ float Compass::getDegrees()
 
 	// Hold the module so that Y is pointing 'up' and you can measure the heading with x&z
 	// Calculate heading when the magnetometer is level, then correct for signs of axis.
-	float heading = atan2(magnetic.z, magnetic.x);
+	//Need to change to adjust for the right orientation
+	float heading = atan2(magnetic.y, magnetic.x);
 
 	// Once you have your heading, you must then add your 'Declination Angle',
 	// which is the 'Error' of the magnetic field in your location.
