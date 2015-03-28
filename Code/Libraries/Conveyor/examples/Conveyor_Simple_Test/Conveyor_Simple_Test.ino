@@ -18,6 +18,7 @@
 *7) Go to the FISH position, and open and close claws.
 *8) Go to the GREEN_BIN position, and open and close claws.
 *9) Go to the FISH position, and open and close claws.
+*/
 
 Conveyor *claw;
 
@@ -31,90 +32,90 @@ void loop() {
   bool inPosition = false;
   while (!inPosition)
   {
-      inPosition = goToBin(FISH);
-``}
-  inPosition = false;
-  
-  openClaw();
-  //location where delay would go
-  closeClaw();
-  
-  while(!inPosition)
-  {
-    inPosition = goToBin(RED_BIN);
+      inPosition = claw->goToBin(FISH);
   }
   inPosition = false;
   
-  openClaw();
+  claw->openClaw();
   //location where delay would go
-  closeClaw();
+  claw->closeClaw();
+  
+  while(!inPosition)
+  {
+      inPosition = claw->goToBin(RED_BIN);
+  }
+  inPosition = false;
+  
+  claw->openClaw();
+  //location where delay would go
+  claw->closeClaw();
   
   while (!inPosition)
   {
-      inPosition = goToBin(FISH);
-``}
+      inPosition = claw->goToBin(FISH);
+  }
   inPosition = false;
   
-  openClaw();
+  claw->openClaw();
   //location where delay would go.
-  closeClaw();
+  claw->closeClaw();
   
     while (!inPosition)
   {
-      inPosition = goToBin(Yellow_BIN);
-``}
+        inPosition = claw->goToBin(YELLOW_BIN);
+  }
   inPosition = false;
   
-  openClaw();
+  claw->openClaw();
   //location where delay would go
-  closeClaw();
+  claw->closeClaw();
   
     while (!inPosition)
   {
-      inPosition = goToBin(FISH);
-``}
+        inPosition = claw->goToBin(FISH);
+  }
   inPosition = false;
   
-  openClaw();
+  claw->openClaw();
   //location where delay would go
-  closeClaw();
+  claw->closeClaw();
   
     while (!inPosition)
   {
-      inPosition = goToBin(BLUE_BIN);
-``}
+        inPosition = claw->goToBin(BLUE_BIN);
+  }
   inPosition = false;
   
-  openClaw();
+  claw->openClaw();
   //location where delay would go
-  closeClaw();  
+  claw->closeClaw();
   
   while (!inPosition)
   {
-      inPosition = goToBin(FISH);
-``}
+      inPosition = claw->goToBin(FISH);
+  }
   inPosition = false;
   
-  openClaw();
+  claw->openClaw();
   //location where delay would go
-  closeClaw();
+  claw->closeClaw();
   
     while (!inPosition)
   {
-      inPosition = goToBin(GREEN_BIN);
-``}
+        inPosition = claw->goToBin(GREEN_BIN);
+  }
   inPosition = false;
   
-  openClaw();
+  claw->openClaw();
   //location where delay would go
-  closeClaw();
+  claw->closeClaw();
   
     while (!inPosition)
   {
-      inPosition = goToBin(FISH);
-``}
+        inPosition = claw->goToBin(FISH);
+  }
   inPosition = false;
   
-  openClaw();
+  claw->openClaw();
   //location where delay would go
-  closeClaw();
+  claw->closeClaw();

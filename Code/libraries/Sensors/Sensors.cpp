@@ -147,8 +147,54 @@ hmc5883MagData Compass::getMagVector()
 	magVector.y = magData.y / _hmc5883_Gauss_LSB_XY * 100;
 	magVector.z = magData.z / _hmc5883_Gauss_LSB_Z * 100;
 
-	return magVector;
+	return magData;
 }
+
+
+void Compass::calibrate()
+{
+	//Rotate the robot slowly in a circle (direction does not matter)
+	//Calculate the center.x, center.y, and center.z by averaging all the values
+	int numPoints = 1;
+	hmc5883MagData startPoint = getMagVector();
+	Serial.println("Start rotating the robot slowly when you see GO.");
+	delay(1000);
+	Serial.println("3...");
+	delay(1000);
+	Serial.println("2...");
+	delay(1000);
+	Serial.println("1...");
+	delay(1000);
+	Serial.println("GO");
+	unsigned long timer = millis();
+	while(_calibrate)
+	{
+		//Get the current point
+		currentPoint = getMagVector();
+
+		//When at least a second has passed...
+		if(millis() - timer >= 1000UL)
+		{
+			//...and all the points are close to the starting point, end the calibration. Save the center point to the EEPROM
+			if(abs(_centerPoint.x - currentPoint.x) < 10 && abs(_centerPoint.y - currentPoint.y) < 10 && abs(_centerPoint.z - currentPoint.z) < 10)
+			{
+				Serial.println("Calibrating done!");
+				Serial.print("Center- X: ");
+				Serial.print(_centerPoint.x);
+				Serial.print(" Y: ");
+				Serial.print(_centerPoint.y);
+				Serial.print(" Z: ");
+				Serial.println(_centerPoint.z);
+			}
+		}
+
+		//Find the average x, y and z value of all the points
+		_centerPoint.x = (_centerPoint.x * (numPoints - 1) + currentPoint.x) / numPoints;
+		_centerPoint.y = (_centerPoint.y * (numPoints - 1) + currentPoint.y) / numPoints;
+		_centerPoint.z = (_centerPoint.z * (numPoints - 1) + currentPoint.z) / numPoints;
+	}
+}
+
 
 /**
 * Returns the how many degrees the robot is rotated from the initial heading. Always positive, and always less than 180 degrees. (0 <= degrees < 180)
@@ -157,7 +203,7 @@ float Compass::getDegrees()
 {
 	hmc5883MagData magVector = getMagVector(); //The magnetic values stored in a vector
 
-	// Assume the point cloud of magnetic data has a centroid at the origin. 
+	// Assume the point cloud of magnetic data has a centroid at the origin.
 	//    If it doesn't, we need to make calibration code and run that, storing the values (center.x, center.y, center.z) in EEPROM to be used later.
 	//    If we need to calibrate, there is the EEPROMAnything library we can use to store the center point, then subtract all magvectors from this point to determine the real vector.
 	// Calculate the (always positive) angle in radians between the first heading and the new magVector.
@@ -167,7 +213,7 @@ float Compass::getDegrees()
 	// Once you have your heading, you must then add your 'Declination Angle',
 	// which is the 'Error' of the magnetic field in your location.
 	// Find yours here: http://www.magnetic-declination.com/
-	heading += _declinationAngle;
+	//heading += _declinationAngle;
 
 	// Correct for when signs are reversed.
 	if(heading < 0)

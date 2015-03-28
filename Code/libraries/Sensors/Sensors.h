@@ -117,6 +117,8 @@ public:
 
 private:
     hmc5883MagData _initMagVector; //Initial vector of the magnetic values read in when the robot is first started.
+    hmc5883MagData _centerPoint; //center of the magnetic field when calibrated.
+    bool _calibrate; //Wether or not we are calibrating the compass
     float _declinationAngle; // 'Error' of the magnetic field in your location. Find yours here: http://www.magnetic-declination.com/.
     
     float _hmc5883_Gauss_LSB_XY;  // Varies with gain

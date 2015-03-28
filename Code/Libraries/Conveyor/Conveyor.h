@@ -29,7 +29,7 @@ class Conveyor
     BinPosition currentPosition;
     bool currentState;
     bool prevState
-	
+    
 };
 
 #endif
