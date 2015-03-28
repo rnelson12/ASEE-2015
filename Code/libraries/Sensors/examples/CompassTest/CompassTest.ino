@@ -10,7 +10,6 @@ void setup() {
 }
 
 void loop() {
-  Serial.print("Init degrees: "); 
-  Serial.println(compass->getInitDegrees());
+  
   Serial.println(compass->getDegrees());
 }

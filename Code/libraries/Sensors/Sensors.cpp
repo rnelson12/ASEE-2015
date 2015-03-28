@@ -57,14 +57,14 @@ Block VisualSensor::getBlock()
   for (int j = 0; j < numBlocks; j++)
   {
 	// _pixy.blocks[ j ].print();
-    
+	
 	//Find the lowest block in the frame (which should be the closest block)
-    //higher y value means lower in the frame
-    if (_pixy.blocks[j].y >= maxY)
-    {
-      maxY = _pixy.blocks[j].y;
-      block = _pixy.blocks[j];
-    }
+	//higher y value means lower in the frame
+	if (_pixy.blocks[j].y >= maxY)
+	{
+	  maxY = _pixy.blocks[j].y;
+	  block = _pixy.blocks[j];
+	}
   }
   return block;
 }
@@ -102,7 +102,7 @@ Compass::Compass(float declinationAngle)
 	_hmc5883_Gauss_LSB_Z = 980.0F;   // Varies with gain
 
 	_declinationAngle = declinationAngle;
-	_initDegrees = getDegrees();
+	_initMagVector = getMagVector();
 }
 
 /**
@@ -114,9 +114,9 @@ Compass::~Compass()
 }
 
 /**
-* Returns the current heading of the robot in degrees. (0 <= degrees < 360)
-*/
-float Compass::getDegrees()
+ * Returns the vector of magnetic values that the magnetometor is currently reading.
+ */
+hmc5883MagData Compass::getMagVector()
 {
 	// Read the magnetometer
 	Wire.beginTransmission((byte) HMC5883_ADDRESS_MAG);
@@ -142,15 +142,27 @@ float Compass::getDegrees()
 	magData.z = (int16_t) (zlo | ((int16_t) zhi << 8));
 
 	// Convert values to correct numbers
-	hmc5883MagData magnetic;
-	magnetic.x = magData.x / _hmc5883_Gauss_LSB_XY * 100; //* 100 to convert from gauss to microtesla
-	magnetic.y = magData.y / _hmc5883_Gauss_LSB_XY * 100;
-	magnetic.z = magData.z / _hmc5883_Gauss_LSB_Z * 100;
+	hmc5883MagData magVector;
+	magVector.x = magData.x / _hmc5883_Gauss_LSB_XY * 100; //* 100 to convert from gauss to microtesla
+	magVector.y = magData.y / _hmc5883_Gauss_LSB_XY * 100;
+	magVector.z = magData.z / _hmc5883_Gauss_LSB_Z * 100;
 
-	// Hold the module so that Y is pointing 'up' and you can measure the heading with x&z
-	// Calculate heading when the magnetometer is level, then correct for signs of axis.
-	//Need to change to adjust for the right orientation
-	float heading = atan2(magnetic.y, magnetic.x);
+	return magVector;
+}
+
+/**
+* Returns the how many degrees the robot is rotated from the initial heading. Always positive, and always less than 180 degrees. (0 <= degrees < 180)
+*/
+float Compass::getDegrees()
+{
+	hmc5883MagData magVector = getMagVector(); //The magnetic values stored in a vector
+
+	// Assume the point cloud of magnetic data has a centroid at the origin. 
+	//    If it doesn't, we need to make calibration code and run that, storing the values (center.x, center.y, center.z) in EEPROM to be used later.
+	//    If we need to calibrate, there is the EEPROMAnything library we can use to store the center point, then subtract all magvectors from this point to determine the real vector.
+	// Calculate the (always positive) angle in radians between the first heading and the new magVector.
+	float heading = acos((magVector.x*_initMagVector.x + magVector.y*_initMagVector.y + magVector.z*_initMagVector.z) /
+						 (sqrt(magVector.x*magVector.x + magVector.y*magVector.y + magVector.z*magVector.z)*sqrt(_initMagVector.x*_initMagVector.x + _initMagVector.y*_initMagVector.y + _initMagVector.z*_initMagVector.z)));
 
 	// Once you have your heading, you must then add your 'Declination Angle',
 	// which is the 'Error' of the magnetic field in your location.
@@ -168,14 +180,6 @@ float Compass::getDegrees()
 	// Convert radians to degrees.
 	float headingDegrees = heading * 180 / PI;
 	return headingDegrees;
-}
-
-/**
-* Returns the initial heading when the program was first started in degrees. (0 <= degrees < 360)
-*/
-float Compass::getInitDegrees()
-{
-	return _initDegrees;
 }
 
 /**
