@@ -1,7 +1,7 @@
 #include <SPI.h>
 #include <Pixy.h>
 #include <Conveyor.h>
-
+ #include <Servo.h>
 /************************************
  * Test Sketch for Conveyor Library *
  ************************************
@@ -119,3 +119,4 @@ void loop() {
   claw->openClaw();
   //location where delay would go
   claw->closeClaw();
+}
