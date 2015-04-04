@@ -35,7 +35,7 @@ Drivetrain::Drivetrain(const byte leftMotorForward, const byte leftMotorBackward
 	_isRotating = false; //Boolean to keep track if the robot is in the rotate method
 	//Keep track of values needed to turn correctly
 	_turnRight = false;
-	_desiredDegrees = 0.0; //Set initial desired degrees to be 0 (you want there to be no difference between current and desired heading)
+	_desiredDegrees = compass->getDegrees(); //Set initial desired degrees to be the initial degrees read in
 	_leftDegrees = 0.0;
 	_rightDegrees = 0.0;
 	_turnDeadzone = turnDeadzone;//+- degrees acceptable
@@ -122,33 +122,33 @@ boolean Drivetrain::rotateDegrees(byte stepNum, byte power)
 {
 	if(!_isRotating) //If the robot is not currently rotating and this method is called, determine the values needed for the upcoming rotation
 	{
-		_turnRight = _stepDegrees[stepNum - 1] > 0; // -stepDegrees means we rotate left, +stepDegrees means we rotate right
+		_turnRight = _stepDegrees[stepNum - 1] < 0; // +stepDegrees means we rotate left, -stepDegrees means we rotate right
 
 		//Set the robots required degrees based on the initial degrees and the degrees required by the step
 		//Increments desired degrees by what step we're on. So if we turn right 45 deg and left 45 deg, it will be back at the initial heading(which is what we want)
 		_desiredDegrees += _stepDegrees[stepNum - 1]; 
 		//Set desiredDegrees so that it is <180 and >=0
-		if(_desiredDegrees >= 180)
+		if(_desiredDegrees >= 360)
 		{
-			_desiredDegrees -= 180;
+			_desiredDegrees -= 360;
 		}
 		else if(_desiredDegrees < 0)
 		{
-			_desiredDegrees += 180;
+			_desiredDegrees += 360;
 		}
 
 		//Set the acceptable bounds of the robot turning
 		_leftDegrees = _desiredDegrees + _turnDeadzone;
 		_rightDegrees = _desiredDegrees - _turnDeadzone;
 		//leftDegrees is always >=0, so check if it is >180. If it is, change it so it is within 0-180
-		if(_leftDegrees >= 180)
+		if(_leftDegrees >= 360)
 		{
-			_leftDegrees -= 180;
+			_leftDegrees -= 360;
 		}
 		//rightDegrees is always <180, so check if it is <0. If it is, change it so it is within 0-180
 		if(_rightDegrees < 0)
 		{
-			_rightDegrees += 180;
+			_rightDegrees += 360;
 		}
 	}
 	else
@@ -207,7 +207,7 @@ void Drivetrain::stopMotors()
 void Drivetrain::turnRight(byte power)
 {
 	analogWrite(_rightMotorForward, 0);
-	analogWrite(_rightMotorBackward, 0);
+	analogWrite(_rightMotorBackward, power);
 	analogWrite(_leftMotorForward, power);
 	analogWrite(_leftMotorBackward, 0);
 }
@@ -220,7 +220,7 @@ void Drivetrain::turnLeft(byte power)
 	analogWrite(_rightMotorForward, power);
 	analogWrite(_rightMotorBackward, 0);
 	analogWrite(_leftMotorForward, 0);
-	analogWrite(_leftMotorBackward, 0);
+	analogWrite(_leftMotorBackward, power);
 }
 
 //old methods
