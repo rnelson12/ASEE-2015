@@ -76,6 +76,7 @@ public:
 	* returns true when the robot has rotated the required amount.
 	*/
 	void rotate(byte stepNum);
+	boolean _isRotating; //Boolean to keep track if the robot is in the rotate method
 
 private:
 	byte _leftMotorForward; //Pin for left motor forward.
@@ -98,7 +99,6 @@ private:
 	//Variables for rotate method
 	int* _stepDegrees; //An array where each element is how much degrees from initial heading at each step of rotation.
 	Compass* _compass; //Allow drivetrain access to a compass
-	boolean _isRotating; //Boolean to keep track if the robot is in the rotate method
 	//Keep track of values needed to turn correctly
 	boolean _turnRight; //Keep track of turning right or left
 	float _desiredDegrees;

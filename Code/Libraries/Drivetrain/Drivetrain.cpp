@@ -68,18 +68,28 @@ void Drivetrain::goToFishPID(Block block, unsigned long currentTime)
 	//Determine PID output
 	int dt = currentTime - _previousTime; //Find how long has passed since the last adjustment.
 	_previousTime = currentTime;
-
+	Serial.print("Dt: ");
+	Serial.println(dt);
+	
 	//Determine error; how far off the robot is from center
 	int error = _center - block.x;
+	Serial.print("Error: ");
+	Serial.println(error);
 
 	//Determine integral; sum of all errors
-	_integral += error*dt / 1000.0; //Divide by 1000 because dt is milliseconds, adjust for seconds
+	_integral += error*dt / 1000.0f; //Divide by 1000 because dt is milliseconds, adjust for seconds
+	Serial.print("Integral: ");
+	Serial.println(_integral);
 
 	//Determine derivative; rate of change of errors
-	float derivative = 1000.0*(error - _previousError) / dt; //Multiply by 1000 because dt is milliseconds, adjust for seconds
-
+	float derivative = 1000.0f*(error - _previousError) / dt; //Multiply by 1000 because dt is milliseconds, adjust for seconds
+	Serial.print("Derivative: ");
+	Serial.println(derivative);
+	
 	//Determine output
 	int output = (int) (_kp*error + _ki*_integral + _kd*derivative);
+	Serial.print("Output: ");
+	Serial.println(output);
 
 	_previousError = error;
 
@@ -105,6 +115,10 @@ void Drivetrain::goToFishPID(Block block, unsigned long currentTime)
 	{
 		leftPower = 255;
 	}
+	Serial.print("Right power: ");
+	Serial.println(rightPower);
+	Serial.print("Left Power: ");
+	Serial.println(leftPower);
 
 	//Go with new adjustments
 	analogWrite(_rightMotorForward, rightPower);

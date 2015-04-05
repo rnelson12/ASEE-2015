@@ -222,3 +222,7 @@ pip-log.txt
 #Ignore shortcuts and zip files
 *.lnk
 *.zip
+*.vcxproj
+*.filters
+
+Visual Micro/
