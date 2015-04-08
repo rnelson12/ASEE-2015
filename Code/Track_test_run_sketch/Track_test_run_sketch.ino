@@ -1,7 +1,10 @@
 #include <SPI.h>
 #include <Pixy.h>
-#include <VisualSensor.h>
+#include <EEPROM.h>
+#include <EEPROMAnything.h>
+#include <Sensors.h>
 #include <Drivetrain.h>
+#include <Wire.h>
 
 /***********************************************
  * Test Sketch for a test run around the track *
@@ -21,125 +24,148 @@
  *    E) Go to step 2)A).
  */
 
-//Port Assignment
-const byte leftMotorForward = 2;
-const byte leftMotorBackward = 3;
-const byte rightMotorForward = 4;
-const byte rightMotorBackward = 5;
-const char IRPort = A0;
 
-//Adjustment values
-float stopVoltage = 2.8; //How close the robot gets before it stops. Lower number means greater stopping distance. Maximum value is 3.2.
+//Pins for motors
+byte leftMotorForward = 5;
+byte leftMotorBackward = 4;
+byte rightMotorForward = 3;
+byte rightMotorBackward = 2;
+
+//Constants for motors
 int center = 160; //Where the robot aims when it detects a block. Valid values are 0 - 319.
-byte power = 140; //How much power for wheel motors. Valid values are 0 - 255.
+byte power = 80; //How much power for wheel motors. Valid values are 0 - 255.
 
-//Steptimes array; need to test robot around track to fill out these values
-//It's an array where each element is how much time in milliseconds should be spent at each step of rotation.
-int stepTimes[19] = {250, //At fish 1, turn RIGHT to fish 2
-                     600, //At fish 2, turn LEFT to fish 3
-                     800, //At fish 3, turn LEFT to fish 4
+//Constant for turning
+int stepDegrees[19] = {-30, //At fish 1, turn RIGHT to fish 2
+                       70, //At fish 2, turn LEFT to fish 3
+                       90, //At fish 3, turn LEFT to fish 4
+                       
+                       //Turn to face the outer ring of fish
+                       -45, //At fish 4, turn RIGHT to fish 5
+                       135, //At fish 5, turn LEFT to fish 6
+                       45, //At fish 6, turn LEFT to fish 7
+                       45, //At fish 7, turn LEFT to fish 8
+                       45, //At fish 8, turn LEFT to fish 9
+                       45, //At fish 9, turn LEFT to fish 10
+                       45, //At fish 10, turn LEFT to fish 11
+                       45, //At fish 11, turn LEFT to fish 12
+                       
+                       //End of fish collection route
+                       -90, //At fish 12, turn RIGHT to face bin 1
+                       90, //At bin 1, reposition for dumping
+                       45, //At bin 1, face bin 2
+                       45, //At bin 2, reposition for dumping
+                       45, //At bin 2, face bin 3
+                       45, //At bin 3, reposition for dumping
+                       45, //At bin 3, face bin 4
+                       45, //At bin 4, reposition for dumping
+                       };
+byte turnDeadzone = 4;
 
-                     //Turn to face the outer ring of fish
-                     50, //At fish 4, turn RIGHT to fish 5
-                     600, //At fish 5, turn LEFT to fish 6
-                     600, //At fish 6, turn LEFT to fish 7
-                     600, //At fish 7, turn LEFT to fish 8
-                     600, //At fish 8, turn LEFT to fish 9
-                     600, //At fish 9, turn LEFT to fish 10
-                     600, //At fish 10, turn LEFT to fish 11
-                     600, //At fish 11, turn LEFT to fish 12
+//Constants for PID controller
+float kp = 0.25; //proportional
+float ki = 0.06; //integral
+float kd = 0.05; //derivative
 
-                     //End of fish collection route
-                     600, //At fish 12, face bin 1
-                     600, //At bin 1, reposition for dumping
-                     600, //At bin 1, face bin 2
-                     600, //At bin 2, reposition for dumping
-                     600, //At bin 2, face bin 3
-                     600, //At bin 3, reposition for dumping
-                     600, //At bin 3, face bin 4
-                     600, //At bin 4, reposition for dumping
-                    };
+//Constants for visual sensor
+const char IRPort = A0; //Port for IR sensor
+float stopVoltage = 2.6; //Voltage to stop the robot
 
-//Classes from our libraries
-Drivetrain *wheels;
+//Pointers to robot objects
 VisualSensor *eyes;
+Drivetrain *wheels;
+Compass *compass;
 
-//Variables to keep track of
-byte numFishCollected;
-byte stepNum;
+int numFishCollected = 0;
+int stepNum = 1;
 
 void setup()
 {
-  Serial.begin(9600);
+    Serial.begin(9600);
 
-  //Construct drivetrain and sensor objects
-  wheels = new Drivetrain(leftMotorForward, leftMotorBackward, rightMotorForward, rightMotorBackward, center, power, stepTimes);
-  eyes = new VisualSensor(IRPort, stopVoltage);
-
-  numFishCollected = 0;
-  stepNum = 0;
+    //Create objects
+    eyes = new VisualSensor(IRPort, stopVoltage);
+    compass = new Compass(false);
+    wheels = new Drivetrain(leftMotorForward, leftMotorBackward, rightMotorForward, rightMotorBackward,
+                            center, power,
+                            kp, ki, kd,
+                            compass, stepDegrees, turnDeadzone);
 }
 
 void loop()
 {
-  //Test num fish collected; if less than 12 we are in fish collecting state.
-  if (numFishCollected < 12)
-  {
-    //Check if we are close to a fish, if not:
-    if (! (*eyes).isClose())
+    unsigned long currentTime = millis();
+    //Test num fish collected; if less than 12 we are in fish collecting state.
+    if(numFishCollected < 12)
     {
-      //Move toward the closest fish
-      Block targetBlock = (*eyes).getBlock(); //Get closest fish
-      
-      //Get block returns a bad block if no blocks were found, check if the block is the bad block
-      if(targetBlock.signature != (*eyes).badBlock.signature)
-      {
-        (*wheels).goToFish(targetBlock); //Block is good, Move toward it
-      }
+        if(!wheels->_isRotating)
+        {
+            //Check if we are close to a fish, if not:
+            if(!(*eyes).isClose())
+            {
+                //Move toward the closest fish
+                Block targetBlock = (*eyes).getBlock(); //Get closest fish
+
+                //Get block returns a bad block if no blocks were found, check if the block is the bad block
+                if(targetBlock.signature != (*eyes).badBlock.signature)
+                {
+                    wheels->goToFishPID(targetBlock, currentTime); //Block is good, Move toward it
+                }
+                else
+                {
+                    wheels->stopMotors();
+                }
+            }
+            else //We are close to a fish:
+            {
+                //Insert conveyor code here
+                //Conveyor code done; increment number of fish collected
+                numFishCollected++;
+
+                //4 second delay to simulate conveyor time
+                (*wheels).stopMotors();
+                delay(4000);
+
+                //Rotate toward next fish
+                wheels->rotateDegrees(stepNum, power);
+            }
+        }
+        else //We are rotating
+        {
+            if(wheels->rotateDegrees(stepNum, power))
+            {
+                stepNum++;
+            }
+        }
     }
-    else //We are close to a fish:
+    else //We are in dumping fish state
     {
-      //Insert conveyor code here
-      //Conveyor code done; increment number of fish collected
-      numFishCollected++;
+        //Check if we are close to a bin, if not:
+        if(!(*eyes).isClose())
+        {
+            //Move toward the closest bin
+            Block targetBlock = (*eyes).getBlock(); //Get closest bin
 
-      //4 second delay to simulate conveyor time
-      (*wheels).stopMotors();
-      delay(4000);
+            //Get block returns a bad block if no blocks were found, check if the block is the bad block
+            if(targetBlock.signature != (*eyes).badBlock.signature)
+            {
+                (*wheels).goToFish(targetBlock); //Block is good, Move toward it
+            }
+        }
+        else //We are close to a bin:
+        {
+            //Rotate to position for dumping
+            stepNum++;
+            (*wheels).rotate(stepNum);
 
-      //Rotate toward next fish
-      stepNum++;
-      (*wheels).rotate(stepNum);
+            //Insert dumping code here
+            //4 second delay to simulate dumping time
+            (*wheels).stopMotors();
+            delay(4000);
+
+            //Rotate toward next bin
+            stepNum++;
+            (*wheels).rotate(stepNum);
+        }
     }
-  }
-  else //We are in dumping fish state
-  {
-    //Check if we are close to a bin, if not:
-    if (! (*eyes).isClose())
-    {
-      //Move toward the closest bin
-      Block targetBlock = (*eyes).getBlock(); //Get closest bin
-      
-      //Get block returns a bad block if no blocks were found, check if the block is the bad block
-      if(targetBlock.signature != (*eyes).badBlock.signature)
-      {
-        (*wheels).goToFish(targetBlock); //Block is good, Move toward it
-      }
-    }
-    else //We are close to a bin:
-    {
-      //Rotate to position for dumping
-      stepNum++;
-      (*wheels).rotate(stepNum);
-
-      //Insert dumping code here
-      //4 second delay to simulate dumping time
-      (*wheels).stopMotors();
-      delay(4000);
-
-      //Rotate toward next bin
-      stepNum++;
-      (*wheels).rotate(stepNum);
-    }
-  }
 }

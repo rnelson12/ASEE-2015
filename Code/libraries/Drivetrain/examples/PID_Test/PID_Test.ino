@@ -1,7 +1,11 @@
+#include <Arduino.h>
 #include <SPI.h>
 #include <Pixy.h>
 #include <Sensors.h>
 #include <Drivetrain.h>
+#include <Wire.h>
+#include <eeprom.h>
+#include <EEPROMAnything.h>
 
 /**********************************
  * Test Sketch for PID Controller *
@@ -11,10 +15,10 @@
  */
 
 //Pins for motors
-byte leftMotorForward = 2;
-byte leftMotorBackward = 3;
-byte rightMotorForward = 4;
-byte rightMotorBackward = 5;
+byte leftMotorForward = 5;
+byte leftMotorBackward = 4;
+byte rightMotorForward = 3;
+byte rightMotorBackward = 2;
 
 //Constants for motors
 int center = 160; //Where the robot aims when it detects a block. Valid values are 0 - 319.
@@ -25,9 +29,9 @@ int stepDegrees[] = {45};
 byte turnDeadzone = 2;
 
 //Constants for PID controller
-float kp = 0.25; //proportional
-float ki = 0.025; //integral
-float kd = 0.07; //derivative
+float kp = 0.25; //0.25;  //proportional
+float ki = 0.06; //0.025; //integral
+float kd = 0.05; //0.07;  //derivative
 
 //Constants for visual sensor
 const char IRPort = A0; //Port for IR sensor
@@ -44,7 +48,7 @@ void setup()
   
   //Create objects
   eyes = new VisualSensor(IRPort, stopVoltage);
-  compass = new Compass();
+  compass = new Compass(false);
   wheels = new Drivetrain(leftMotorForward, leftMotorBackward, rightMotorForward, rightMotorBackward,
                           center, power,
                           kp, ki, kd,
