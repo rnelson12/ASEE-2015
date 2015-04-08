@@ -4,15 +4,11 @@ const byte conveyorMotorForwardPin = 2;
 const byte conveyorMotorBackwardPin = 3;
 const byte clawMotorPin = 4;
 const byte limitSwitchPin = 5 ;//?????
-const byte binMotorForwardPin = 6;
-const byte binMotorBackwardPin = 7;
-
 
 Conveyor::Conveyor()
 {
   motorSpeed = 160;
-  binMotorSpeed = 200;
-  binDumpingTime = 2000UL;
+  
   clawServo.attach(clawMotorPin);
   closedAngle = 0;
   openAngle = 90;
@@ -24,9 +20,6 @@ Conveyor::Conveyor()
   pinMode(conveyorMotorBackwardPin, OUTPUT);
   pinMode(clawMotorPin, OUTPUT);
   pinMode(limitSwitchPin, INPUT);
-  pinMode(binMotorForwardPin, OUTPUT);
-  pinMode(binMotorBackwardPin, OUTPUT);
-
 }
 
 Conveyor::~Conveyor()
@@ -47,19 +40,18 @@ bool correctPosition = false;
  //Counting part
  if(binPosition>currentPosition)  
  {
-   if(currentState == HIGH && prevState == LOW)
+   if(currentState == HIGH && prevState = LOW)
    {
-     currentPosition = (BinPosition)((int)(currentPosition) + 	1);
+     currentPosition++;
    } 
    analogWrite(conveyorMotorForwardPin, motorSpeed);
    analogWrite(conveyorMotorBackwardPin, 0);
  }
  else if(binPosition<currentPosition)  
  {
-   if(currentState == HIGH && prevState == LOW)
+   if(currentState == HIGH && prevState = LOW)
    {
-     currentPosition = (BinPosition)((int)(currentPosition) - 	1);
-
+     currentPosition--;
    }
    analogWrite(conveyorMotorBackwardPin, motorSpeed);
     analogWrite(conveyorMotorForwardPin, 0);
@@ -89,21 +81,4 @@ void Conveyor::closeClaw()
 void Conveyor::openClaw()
 {
   clawServo.write(closedAngle);
-}
-bool Conveyor::dumpBins(unsigned long startTime)
-{
-   unsigned long currentTime = millis();
-   
-   if((currentTime - startTime)>=binDumpingTime)
-   {
-    analogWrite(binMotorBackwardPin, 0);
-    analogWrite(binMotorForwardPin, 0);
-    return true;
-   }
-   else
-   {
-      analogWrite(binMotorBackwardPin, 0);
-      analogWrite(binMotorForwardPin, binMotorSpeed);
-	return false;
-   }
 }

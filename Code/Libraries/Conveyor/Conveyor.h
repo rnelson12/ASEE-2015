@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-enum BinPosition : int
+enum BinPosition : byte
 {
   FISH = 0,
   RED_BIN = 1,
@@ -18,20 +18,17 @@ class Conveyor
   public:
     Conveyor();
     ~Conveyor();
-    bool goToBin(BinPosition binPosition);
+    bool goToBin(int binPosition);
     void openClaw();
     void closeClaw();
-    bool dumpBins(unsigned long startTime);
   private:
-    int binMotorSpeed;
     int motorSpeed;
     int closedAngle;
     int openAngle;
     Servo clawServo;
     BinPosition currentPosition;
     bool currentState;
-    bool prevState;
-    unsigned long binDumpingTime;
+    bool prevState
     
 };
 
