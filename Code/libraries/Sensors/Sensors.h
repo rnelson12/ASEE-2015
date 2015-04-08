@@ -5,6 +5,9 @@
 #include <SPI.h>
 #include <Pixy.h>
 #include <Wire.h>
+#include <EEPROM.h>
+#include <EEPROMAnything.h>
+
 
 /* Taken from ADAFRUIT Library */
 #define HMC5883_ADDRESS_MAG (0x3C >> 1) // 0011110x // I2C ADDRESS/BITS
@@ -98,7 +101,7 @@ public:
      * -declinationAngle: 'Error' of the magnetic field in your location. Find yours here: http://www.magnetic-declination.com/.
      * -(for Norman, I calculated it to be: 0.069522276053)
      */
-    Compass(float declinationAngle = 0.069522276053F);
+    Compass(bool calibrate, float declinationAngle = 0.069522276053F);
 
     /**
      * Deconstructor
@@ -118,19 +121,25 @@ public:
 private:
     hmc5883MagData _initMagVector; //Initial vector of the magnetic values read in when the robot is first started.
     hmc5883MagData _centerPoint; //center of the magnetic field when calibrated.
+    float _rotationMatrix[3][3]; //Rotation matrix to rotate all points to the correct orientation
     bool _calibrate; //Wether or not we are calibrating the compass
     float _declinationAngle; // 'Error' of the magnetic field in your location. Find yours here: http://www.magnetic-declination.com/.
     
     float _hmc5883_Gauss_LSB_XY;  // Varies with gain
     float _hmc5883_Gauss_LSB_Z; // Varies with gain
 
+
+    void calibrate();
+
     //Private Functions
     bool begin(void); //Set up the magnetometer
     void write8(byte address, byte reg, byte value); //Write data to the magnetometer
+
     /**
     * Returns the vector of magnetic values that the magnetometor is currently reading.
+    * Bool adjusted determines whether or not to return the values adjusted for the center obtained during calibration.
     */
-    hmc5883MagData getMagVector();
+    hmc5883MagData getMagVector(bool adjusted);
 };
 
 #endif
