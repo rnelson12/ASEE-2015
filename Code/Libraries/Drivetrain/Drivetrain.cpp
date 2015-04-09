@@ -73,6 +73,8 @@ void Drivetrain::goToFishPID(Block block, unsigned long currentTime)
 	
 	//Determine error; how far off the robot is from center
 	int error = _center - block.x;
+	Serial.print("block.x:");
+	Serial.println(block.x);
 	Serial.print("Error: ");
 	Serial.println(error);
 
@@ -136,8 +138,6 @@ boolean Drivetrain::rotateDegrees(byte stepNum, byte power)
 {
 	if(!_isRotating) //If the robot is not currently rotating and this method is called, determine the values needed for the upcoming rotation
 	{
-		_turnRight = _stepDegrees[stepNum - 1] < 0; // +stepDegrees means we rotate left, -stepDegrees means we rotate right
-
 		//Set the robots required degrees based on the initial degrees and the degrees required by the step
 		//Increments desired degrees by what step we're on. So if we turn right 45 deg and left 45 deg, it will be back at the initial heading(which is what we want)
 		_desiredDegrees += _stepDegrees[stepNum - 1]; 
@@ -175,7 +175,7 @@ boolean Drivetrain::rotateDegrees(byte stepNum, byte power)
 	//Check if robot has turned far enough
 	if(currentDegrees <= _leftDegrees && currentDegrees >= _rightDegrees)
 	{
-		Serial.println("Done rotating!");
+		//Serial.println("Done rotating!");
 		//Robot has rotated the correct amount
 		stopMotors();
 		_isRotating = false;
@@ -183,20 +183,25 @@ boolean Drivetrain::rotateDegrees(byte stepNum, byte power)
 	}
 	else //Robot has not rotated the correct amount, continue rotating
 	{
-		Serial.println("--- Not rotated far enough: ---");
-		Serial.print("Desired degrees: ");
-		Serial.println(_desiredDegrees);
-		Serial.print("Current degrees: ");
-		Serial.println(currentDegrees);
+		//Serial.println("--- Not rotated far enough: ---");
+		//Serial.print("Desired degrees: ");
+		//Serial.println(_desiredDegrees);
+		//Serial.print("Current degrees: ");
+		//Serial.println(currentDegrees);
+		//Serial.print("left degrees: ");
+		//Serial.println(_leftDegrees);
+		//Serial.print("right degrees: ");
+		//Serial.println(_rightDegrees);
 
-		if(_turnRight)
+
+		if(currentDegrees > _desiredDegrees)
 		{
-			Serial.println("turn right");
+			//Serial.println("turn right");
 			turnRight(power);
 		}
 		else
 		{
-			Serial.println("turn left");
+			//Serial.println("turn left");
 			turnLeft(power);
 		}
 		_isRotating = true;
