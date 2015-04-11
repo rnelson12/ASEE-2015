@@ -63,9 +63,9 @@ int stepDegrees[19] = {-30, //At fish 1, turn RIGHT to fish 2
 byte turnDeadzone = 4;
 
 //Constants for PID controller
-float kp = 0.25; //proportional
-float ki = 0.06; //integral
-float kd = 0.05; //derivative
+float kp = 0.25f; //proportional
+float ki = 0.06f; //integral
+float kd = 0.05f; //derivative
 
 //Constants for visual sensor
 const char IRPort = A0; //Port for IR sensor
@@ -103,6 +103,7 @@ void loop()
             //Check if we are close to a fish, if not:
             if(!(*eyes).isClose())
             {
+
                 //Move toward the closest fish
                 Block targetBlock = (*eyes).getBlock(); //Get closest fish
 
@@ -118,6 +119,7 @@ void loop()
             }
             else //We are close to a fish:
             {
+                Serial.println("IR sensor close");
                 //Insert conveyor code here
                 //Conveyor code done; increment number of fish collected
                 numFishCollected++;
@@ -132,6 +134,7 @@ void loop()
         }
         else //We are rotating
         {
+            Serial.println("rotating to next fish");
             if(wheels->rotateDegrees(stepNum, power))
             {
                 stepNum++;
