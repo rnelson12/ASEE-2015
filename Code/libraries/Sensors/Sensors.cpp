@@ -52,18 +52,18 @@ Block VisualSensor::getBlock()
   //Higher y value means the block is lower in the frame.
   //Set the initial maximum to be the first block found.
   int maxY = _pixy.blocks[0].y;
-  int blockIndex; //Declare block index to be returned
+  Block block; //Declare block index to be returned
   //Loop through each block
-  for (int block = 0; block < numBlocks; block++)
-  {    
-    //find maxY and index of that block
-    if (_pixy.blocks[block].y >= maxY)
-    {
-      maxY = _pixy.blocks[block].y;
-      blockIndex = block;
-    }
+  for(int blockIndex = 0; blockIndex < numBlocks; blockIndex++)
+  {
+      //find maxY and index of that block
+      if(_pixy.blocks[blockIndex].y >= maxY)
+      {
+          maxY = _pixy.blocks[blockIndex].y;
+          block = _pixy.blocks[blockIndex];
+      }
   }
-  return _pixy.blocks[blockIndex];
+  return block;
 }
 
 /**
