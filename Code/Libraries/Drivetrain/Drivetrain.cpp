@@ -68,30 +68,30 @@ void Drivetrain::goToFishPID(Block block, unsigned long currentTime)
 	//Determine PID output
 	int dt = currentTime - _previousTime; //Find how long has passed since the last adjustment.
 	_previousTime = currentTime;
-	Serial.print("Dt: ");
-	Serial.println(dt);
+	//Serial.print("Dt: ");
+	//Serial.println(dt);
 	
 	//Determine error; how far off the robot is from center
 	int error = _center - block.x;
-	Serial.print("block.x:");
-	Serial.println(block.x);
-	Serial.print("Error: ");
-	Serial.println(error);
+	//Serial.print("block.x:");
+	//Serial.println(block.x);
+	//Serial.print("Error: ");
+	//Serial.println(error);
 
 	//Determine integral; sum of all errors
 	_integral += error*dt / 1000.0f; //Divide by 1000 because dt is milliseconds, adjust for seconds
-	Serial.print("Integral: ");
-	Serial.println(_integral);
+	//Serial.print("Integral: ");
+	//Serial.println(_integral);
 
 	//Determine derivative; rate of change of errors
 	float derivative = 1000.0f*(error - _previousError) / dt; //Multiply by 1000 because dt is milliseconds, adjust for seconds
-	Serial.print("Derivative: ");
-	Serial.println(derivative);
+	//Serial.print("Derivative: ");
+	//Serial.println(derivative);
 	
 	//Determine output
 	int output = (int) (_kp*error + _ki*_integral + _kd*derivative);
-	Serial.print("Output: ");
-	Serial.println(output);
+	//Serial.print("Output: ");
+	//Serial.println(output);
 
 	_previousError = error;
 
@@ -117,10 +117,10 @@ void Drivetrain::goToFishPID(Block block, unsigned long currentTime)
 	{
 		leftPower = 255;
 	}
-	Serial.print("Right power: ");
-	Serial.println(rightPower);
-	Serial.print("Left Power: ");
-	Serial.println(leftPower);
+	//Serial.print("Right power: ");
+	//Serial.println(rightPower);
+	//Serial.print("Left Power: ");
+	//Serial.println(leftPower);
 
 	//Go with new adjustments
 	analogWrite(_rightMotorForward, rightPower);
@@ -184,25 +184,36 @@ boolean Drivetrain::rotateDegrees(byte stepNum, byte power)
 	else //Robot has not rotated the correct amount, continue rotating
 	{
 		//Serial.println("--- Not rotated far enough: ---");
-		//Serial.print("Desired degrees: ");
-		//Serial.println(_desiredDegrees);
-		//Serial.print("Current degrees: ");
-		//Serial.println(currentDegrees);
+		Serial.print("Desired degrees: ");
+		Serial.println(_desiredDegrees);
+		Serial.print("Current degrees: ");
+		Serial.println(currentDegrees);
 		//Serial.print("left degrees: ");
 		//Serial.println(_leftDegrees);
 		//Serial.print("right degrees: ");
 		//Serial.println(_rightDegrees);
 
+		//Calculate shortest rotation
+		float diff = _desiredDegrees - currentDegrees;
+		if(diff > 180)
+		{
+			
+			currentDegrees += 360;
+		}
+		else if(diff < -180)
+		{
+			currentDegrees -= 360;
+		}
 
 		if(currentDegrees > _desiredDegrees)
 		{
 			//Serial.println("turn right");
-			turnRight(power);
+			turnLeft(power);
 		}
 		else
 		{
 			//Serial.println("turn left");
-			turnLeft(power);
+			turnRight(power);
 		}
 		_isRotating = true;
 		return false;
